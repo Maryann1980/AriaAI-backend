@@ -23,21 +23,19 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 // Allow multiple origins
 const allowedOrigins = [
   'https://aria-ai-beige.vercel.app', 
-  'http://localhost:5173',  // Allow Vite dev server
-  'http://localhost:3000'   // If using Create React App
+  'http://localhost:5173',
+  'http://localhost:3000'
 ];
 
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['POST'],
-  allowedHeaders: ['Content-Type']
+  origin: allowedOrigins,
+  methods: ['POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+  credentials: true
 }));
+
+// Ensure Express responds to OPTIONS preflight requests
+app.options('*', cors());
 
 // Middleware to parse JSON requests
 app.use(express.json());
