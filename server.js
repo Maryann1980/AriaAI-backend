@@ -1,4 +1,3 @@
-// Import required packages
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -21,9 +20,21 @@ if (!apiKey) {
 const genAI = new GoogleGenerativeAI(apiKey);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-// Enable CORS (update with your frontend URL)
+// Allow multiple origins
+const allowedOrigins = [
+  'https://aria-ai-beige.vercel.app', 
+  'http://localhost:5173',  // Allow Vite dev server
+  'http://localhost:3000'   // If using Create React App
+];
+
 app.use(cors({
-  origin: ['https://aria-ai-beige.vercel.app'], // Add more origins if needed
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['POST'],
   allowedHeaders: ['Content-Type']
 }));
